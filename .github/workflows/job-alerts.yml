@@ -1,0 +1,52 @@
+# Checks job sources and pushes new matches to a phone through ntfy.
+# Needs the NTFY_TOPIC repository secret. See tools/job-finder/README.md.
+name: Job alerts
+
+on:
+  # Started every 30 minutes by the Cloudflare Worker in tools/job-alerts-trigger, because GitHub's
+  # scheduler only fired this every 3–7 hours. ~1,440 Actions minutes a month.
+  workflow_dispatch:
+  schedule:
+    # Fallback in case the Worker stops (e.g. its GitHub token expires). Adds ~120 minutes a month.
+    - cron: '17 */6 * * *'
+
+concurrency:
+  group: job-alerts
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+    steps:
+      - name: Skip until NTFY_TOPIC is set
+        if: env.NTFY_TOPIC == ''
+        run: echo "::notice::NTFY_TOPIC secret is not set, so no alerts were checked or sent."
+
+      - uses: actions/checkout@v7
+        if: env.NTFY_TOPIC != ''
+
+      # What has already been alerted lives in the Actions cache, not the repo, so runs never commit.
+      - name: Restore alert state
+        if: env.NTFY_TOPIC != ''
+        uses: actions/cache/restore@v6
+        with:
+          path: tools/job-finder/data/alert-state.json
+          key: job-alerts-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: job-alerts-
+
+      - name: Check for new jobs
+        if: env.NTFY_TOPIC != ''
+        run: node tools/job-finder/index.mjs --alert
+
+      - name: Save alert state
+        if: env.NTFY_TOPIC != ''
+        uses: actions/cache/save@v6
+        with:
+          path: tools/job-finder/data/alert-state.json
+          key: job-alerts-${{ github.run_id }}-${{ github.run_attempt }}

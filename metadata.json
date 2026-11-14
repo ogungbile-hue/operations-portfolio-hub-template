@@ -1,0 +1,8 @@
+{
+  "name": "Executive Operations & Digital Media Portfolio Hub",
+  "description": "Streamlining executive workflows, tracking project milestones, and delivering brand-consistent digital media.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

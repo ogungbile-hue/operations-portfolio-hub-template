@@ -1,0 +1,20 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+.aistudio/
+.claude/
+*.db
+
+# Job Finder private data (ignore real application logs, keep template files)
+tools/job-finder/data/agent-runs/
+tools/job-finder/data/applications/*.md
+!tools/job-finder/data/applications/README.md
+!tools/job-finder/data/applications/.gitkeep
+tools/job-finder/data/*.mp4
+tools/job-finder/data/*.mov
+tools/job-finder/data/*.pdf

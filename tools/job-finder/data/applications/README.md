@@ -1,0 +1,1 @@
+# Application Logs\n\nSubmitted and drafted job applications will be saved here automatically as `<date>-<company>-<role>.md` files by the agent.\n
