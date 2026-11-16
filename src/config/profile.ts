@@ -21,3 +21,4 @@ export const PROFILE = {
   yearsExperience: '5+',
   availability: 'Open to full-time remote opportunities',
 };
+
